@@ -24,7 +24,7 @@ pub struct Message {
 
 #[derive(Clone, Deserialize, Debug)]
 #[serde(untagged)]
-pub enum UploadResult {
+pub enum CloudinaryResult {
     Succes(Box<Response>),
     Error(Box<Error>),
 }

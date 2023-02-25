@@ -7,7 +7,6 @@ mod delivery_type;
 mod raw_convert;
 mod resource_type;
 mod responsive_breakpoints;
-pub mod result;
 
 use paste::paste;
 use std::collections::{BTreeMap, HashMap, HashSet};
