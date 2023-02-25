@@ -33,11 +33,11 @@ pub struct Cloudinary {
 pub struct CloudinaryError(pub String);
 
 impl Cloudinary {
-    pub fn new(cloud_name: String, api_key: i64, api_secret: String) -> Self {
+    pub fn new(cloud_name: &str, api_key: i64, api_secret: &str) -> Self {
         Self {
-            cloud_name,
+            cloud_name: cloud_name.to_string(),
             api_key,
-            api_secret,
+            api_secret: api_secret.to_string(),
         }
     }
 
@@ -179,22 +179,21 @@ impl FromStr for Cloudinary {
         }?;
 
         let api_key_string = url.username();
-        if !api_key_string.is_empty() {
-            let api_key = api_key_string
+        let api_key = if !api_key_string.is_empty() {
+            Ok(api_key_string
                 .parse()
-                .map_err(|_| CloudinaryError(String::from("Api key is not a number.")))?;
-            options = options.api_key(api_key);
+                .map_err(|_| CloudinaryError(String::from("Api key is not a number.")))?)
         } else {
-            return Err(CloudinaryError(String::from("Missing api key.")));
-        }
+            Err(CloudinaryError(String::from("Missing api key.")))
+        }?;
 
-        if let Some(api_secret) = url.password() {
-            options = options.api_secret(api_secret);
+        let api_secret = if let Some(api_secret) = url.password() {
+            Ok(api_secret)
         } else {
-            return Err(CloudinaryError(String::from("Missing api secret.")));
-        }
+            Err(CloudinaryError(String::from("Missing api secret.")))
+        }?;
 
-        Ok(options)
+        Ok(Cloudinary::new(cloud_name, api_key, api_secret))
     }
 }
 
