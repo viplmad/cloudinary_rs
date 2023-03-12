@@ -23,14 +23,7 @@ pub struct Message {
 }
 
 #[derive(Clone, Deserialize, Debug)]
-#[serde(untagged)]
-pub enum CloudinaryResult {
-    Succes(Box<Response>),
-    Error(Box<Error>),
-}
-
-#[derive(Clone, Deserialize, Debug)]
-pub struct Response {
+pub struct UploadResponse {
     pub asset_id: String,
     pub public_id: String,
     pub version: usize,
@@ -53,4 +46,23 @@ pub struct Response {
     pub overwritten: Option<bool>,
     pub original_filename: String,
     pub api_key: String,
+}
+
+#[derive(Clone, Deserialize, Debug)]
+pub struct DeleteResponse {
+    pub result: String,
+}
+
+#[derive(Clone, Deserialize, Debug)]
+#[serde(untagged)]
+pub enum CloudinaryUploadResult {
+    Succes(Box<UploadResponse>),
+    Error(Box<Error>),
+}
+
+#[derive(Clone, Deserialize, Debug)]
+#[serde(untagged)]
+pub enum CloudinaryDeleteResult {
+    Succes(Box<DeleteResponse>),
+    Error(Box<Error>),
 }

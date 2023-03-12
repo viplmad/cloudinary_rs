@@ -12,7 +12,7 @@ use std::str::FromStr;
 use tokio::fs::File;
 use tokio_util::codec::{BytesCodec, FramedRead};
 
-use result::CloudinaryResult;
+use result::{CloudinaryDeleteResult, CloudinaryUploadResult};
 use upload::UploadOptions;
 
 const API_BASE_URL: &str = "https://api.cloudinary.com/v1_1";
@@ -46,7 +46,7 @@ impl Cloudinary {
         &self,
         file_path: &str,
         options: &UploadOptions<'_>,
-    ) -> Result<CloudinaryResult, CloudinaryError> {
+    ) -> Result<CloudinaryUploadResult, CloudinaryError> {
         let file = prepare_file(file_path).await?;
         let multipart = self
             .build_form_data(&mut options.get_map())
@@ -70,13 +70,13 @@ impl Cloudinary {
     /// ```rust
     /// use cloudinary::{Cloudinary};
     /// let cloudinary = Cloudinary::new("api_key".to_string(), "cloud_name".to_string(), "api_secret".to_string() );
-    /// let result = cloudinary.rename_image("file.jpg", "new_file.jpg");
+    /// let result = cloudinary.rename_image("file", "new_file");
     /// ```
     pub async fn rename_image(
         &self,
         public_id: &str,
         new_public_id: &str,
-    ) -> Result<CloudinaryResult, CloudinaryError> {
+    ) -> Result<CloudinaryUploadResult, CloudinaryError> {
         let mut options_map = BTreeMap::<String, String>::new();
         options_map.insert("from_public_id".to_string(), public_id.to_string());
         options_map.insert("to_public_id".to_string(), new_public_id.to_string());
@@ -101,9 +101,12 @@ impl Cloudinary {
     /// ```rust
     /// use cloudinary::{Cloudinary};
     /// let cloudinary = Cloudinary::new("api_key".to_string(), "cloud_name".to_string(), "api_secret".to_string() );
-    /// let result = cloudinary.delete_image("file.jpg");
+    /// let result = cloudinary.delete_image("file");
     /// ```
-    pub async fn delete_image(&self, public_id: &str) -> Result<CloudinaryResult, CloudinaryError> {
+    pub async fn delete_image(
+        &self,
+        public_id: &str,
+    ) -> Result<CloudinaryDeleteResult, CloudinaryError> {
         let mut options_map = BTreeMap::<String, String>::new();
         options_map.insert("public_id".to_string(), public_id.to_string());
 
