@@ -204,7 +204,7 @@ async fn prepare_file(file_path: &str) -> Result<Part, CloudinaryError> {
 
     let filename = Path::new(file_path)
         .file_name()
-        .unwrap_or("file")
+        .ok_or_else(|| CloudinaryError(String::from("Missing filename")))?
         .to_string_lossy()
         .into_owned();
 
