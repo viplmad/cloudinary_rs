@@ -7,8 +7,9 @@ use reqwest::multipart::{Form, Part};
 use reqwest::{Body, Client};
 use sha1::{Digest, Sha1};
 use std::collections::BTreeMap;
-use std::fs::File;
+use std::path::Path;
 use std::str::FromStr;
+use tokio::fs::File;
 use tokio_util::codec::{BytesCodec, FramedRead};
 
 use result::CloudinaryResult;
@@ -43,11 +44,10 @@ impl Cloudinary {
 
     pub async fn upload_image(
         &self,
-        src: File,
-        filename: &str,
+        file_path: &str,
         options: &UploadOptions<'_>,
     ) -> Result<CloudinaryResult, CloudinaryError> {
-        let file = prepare_file(src, filename).await?;
+        let file = prepare_file(file_path).await?;
         let multipart = self
             .build_form_data(&mut options.get_map())
             .part("file", file);
@@ -197,11 +197,21 @@ impl FromStr for Cloudinary {
     }
 }
 
-async fn prepare_file(file: File, filename: &str) -> Result<Part, CloudinaryError> {
-    let stream = FramedRead::new(tokio::fs::File::from_std(file), BytesCodec::new());
+async fn prepare_file(file_path: &str) -> Result<Part, CloudinaryError> {
+    let file = File::open(&file_path)
+        .await
+        .map_err(|err| CloudinaryError(err.to_string()))?;
+
+    let filename = Path::new(file_path)
+        .file_name()
+        .unwrap()
+        .to_string_lossy()
+        .into_owned();
+
+    let stream = FramedRead::new(file, BytesCodec::new());
     let file_body = Body::wrap_stream(stream);
     Part::stream(file_body)
-        .file_name(filename.to_string())
+        .file_name(filename)
         .mime_str("image/*")
         .map_err(|err| CloudinaryError(err.to_string()))
 }
