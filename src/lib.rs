@@ -204,7 +204,7 @@ async fn prepare_file(file_path: &str) -> Result<Part, CloudinaryError> {
 
     let filename = Path::new(file_path)
         .file_name()
-        .unwrap()
+        .unwrap_or("file")
         .to_string_lossy()
         .into_owned();
 
