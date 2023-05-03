@@ -132,15 +132,15 @@ impl Cloudinary {
     fn build_form_data(&self, options_map: &mut BTreeMap<String, String>) -> Form {
         let timestamp = Utc::now().timestamp_millis().to_string();
 
-        let mut form = Form::new()
-            .text(UPLOAD_OPTION_API_KEY, self.api_key.to_string())
-            .text(UPLOAD_OPTION_TIMESTAMP, timestamp.clone());
+        let mut form = Form::new().text(UPLOAD_OPTION_API_KEY, self.api_key.to_string());
 
         if let Some(resource_type) = options_map.remove(UPLOAD_OPTION_RESOURCE_TYPE) {
             form = form.text(UPLOAD_OPTION_RESOURCE_TYPE, resource_type);
         }
 
-        let signature = self.build_signature(options_map, timestamp);
+        // Add timestamp
+        options_map.insert(UPLOAD_OPTION_TIMESTAMP.to_string(), timestamp);
+        let signature = self.build_signature(options_map);
 
         form = form.text(UPLOAD_OPTION_SIGNATURE, signature);
         for (k, v) in options_map.iter() {
@@ -149,7 +149,7 @@ impl Cloudinary {
         form
     }
 
-    fn build_signature(&self, map: &BTreeMap<String, String>, timestamp: String) -> String {
+    fn build_signature(&self, map: &BTreeMap<String, String>) -> String {
         let mut hasher = Sha1::new();
         if !map.is_empty() {
             let options_string = map
@@ -160,7 +160,6 @@ impl Cloudinary {
             hasher.update(options_string);
             hasher.update(QUERY_PARAM_SEPARATOR);
         }
-        hasher.update(format!("{}={}", UPLOAD_OPTION_TIMESTAMP, timestamp));
         hasher.update(&self.api_secret);
 
         format!("{:x}", hasher.finalize())
