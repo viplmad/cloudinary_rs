@@ -158,7 +158,6 @@ impl Cloudinary {
                 .map(|(key, value)| format!("{key}={value}"))
                 .join(QUERY_PARAM_SEPARATOR);
             hasher.update(options_string);
-            hasher.update(QUERY_PARAM_SEPARATOR);
         }
         hasher.update(&self.api_secret);
 
