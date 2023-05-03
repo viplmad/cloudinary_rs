@@ -36,16 +36,37 @@ pub struct UploadResponse {
     #[serde(deserialize_with = "deserialize_from_str")]
     pub created_at: DateTime<Utc>,
     pub tags: Vec<String>,
+    pub pages: usize,
     pub bytes: usize,
     pub r#type: String,
     pub etag: String,
     pub placeholder: bool,
     pub url: String,
     pub secure_url: String,
-    pub folder: String,
-    pub overwritten: Option<bool>,
+    pub access_mode: String,
     pub original_filename: String,
-    pub api_key: String,
+}
+
+#[derive(Clone, Deserialize, Debug)]
+pub struct RenameResponse {
+    pub asset_id: String,
+    pub public_id: String,
+    pub version: usize,
+    pub version_id: String,
+    pub signature: String,
+    pub width: usize,
+    pub height: usize,
+    pub format: String,
+    pub resource_type: String,
+    #[serde(deserialize_with = "deserialize_from_str")]
+    pub created_at: DateTime<Utc>,
+    pub tags: Vec<String>,
+    pub bytes: usize,
+    pub r#type: String,
+    pub placeholder: bool,
+    pub url: String,
+    pub secure_url: String,
+    pub access_mode: String,
 }
 
 #[derive(Clone, Deserialize, Debug)]
@@ -57,6 +78,13 @@ pub struct DeleteResponse {
 #[serde(untagged)]
 pub enum CloudinaryUploadResult {
     Succes(Box<UploadResponse>),
+    Error(Box<Error>),
+}
+
+#[derive(Clone, Deserialize, Debug)]
+#[serde(untagged)]
+pub enum CloudinaryRenameResult {
+    Succes(Box<RenameResponse>),
     Error(Box<Error>),
 }
 

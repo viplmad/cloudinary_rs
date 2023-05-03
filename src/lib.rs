@@ -12,7 +12,7 @@ use std::str::FromStr;
 use tokio::fs::File;
 use tokio_util::codec::{BytesCodec, FramedRead};
 
-use result::{CloudinaryDeleteResult, CloudinaryUploadResult};
+use result::{CloudinaryDeleteResult, CloudinaryUploadResult, CloudinaryRenameResult};
 use upload::UploadOptions;
 
 const API_BASE_URL: &str = "https://api.cloudinary.com/v1_1";
@@ -76,7 +76,7 @@ impl Cloudinary {
         &self,
         public_id: &str,
         new_public_id: &str,
-    ) -> Result<CloudinaryUploadResult, CloudinaryError> {
+    ) -> Result<CloudinaryRenameResult, CloudinaryError> {
         let mut options_map = BTreeMap::<String, String>::new();
         options_map.insert("from_public_id".to_string(), public_id.to_string());
         options_map.insert("to_public_id".to_string(), new_public_id.to_string());
