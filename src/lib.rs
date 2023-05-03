@@ -12,7 +12,7 @@ use std::str::FromStr;
 use tokio::fs::File;
 use tokio_util::codec::{BytesCodec, FramedRead};
 
-use result::{CloudinaryDeleteResult, CloudinaryUploadResult, CloudinaryRenameResult};
+use result::{CloudinaryDeleteResult, CloudinaryRenameResult, CloudinaryUploadResult};
 use upload::UploadOptions;
 
 const API_BASE_URL: &str = "https://api.cloudinary.com/v1_1";

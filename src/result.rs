@@ -36,15 +36,17 @@ pub struct UploadResponse {
     #[serde(deserialize_with = "deserialize_from_str")]
     pub created_at: DateTime<Utc>,
     pub tags: Vec<String>,
-    pub pages: usize,
     pub bytes: usize,
     pub r#type: String,
     pub etag: String,
     pub placeholder: bool,
     pub url: String,
     pub secure_url: String,
-    pub access_mode: String,
     pub original_filename: String,
+    // Not in documentation but needed
+    pub folder: String,
+    pub overwritten: Option<bool>,
+    pub api_key: String,
 }
 
 #[derive(Clone, Deserialize, Debug)]
@@ -66,7 +68,8 @@ pub struct RenameResponse {
     pub placeholder: bool,
     pub url: String,
     pub secure_url: String,
-    pub access_mode: String,
+    // Not in documentation but needed
+    pub folder: String,
 }
 
 #[derive(Clone, Deserialize, Debug)]
