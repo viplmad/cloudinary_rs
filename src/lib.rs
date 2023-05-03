@@ -154,6 +154,7 @@ impl Cloudinary {
         if !map.is_empty() {
             let options_string = map
                 .iter()
+                .sorted()
                 .map(|(key, value)| format!("{key}={value}"))
                 .join(QUERY_PARAM_SEPARATOR);
             hasher.update(options_string);
